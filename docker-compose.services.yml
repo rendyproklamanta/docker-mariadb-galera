@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  # fetcher:
+  #   image: curlimages/curl:latest
+  #   entrypoint: ["/bin/sh", "-c", "./fetcher.sh && exit 0"]
+  #   volumes:
+  #     - ./fetcher.sh:/fetcher.sh
+  #     - ./.env:/app/.env
+  #     - ./initdb/01-init.sql:/app/01-init.sql
+  #   networks:
+  #     - mysql-network
+
+  # MaxScale Service
+  # maxscale:
+  #   image: mariadb/maxscale:latest
+  #   container_name: maxscale
+  #   ports:
+  #     - "6033:6033"
+  #     - "8989:8989"
+  #   volumes:
+  #     - ./maxscale.cnf:/etc/maxscale.cnf
+  #   networks:
+  #     - galera_network
+  #   depends_on:
+  #     master:
+  #       condition: service_healthy
+  #     galera1:
+  #       condition: service_healthy
+  #     galera2:
+  #       condition: service_healthy
+  #     galera3:
+  #       condition: service_healthy
+
+  haproxy:
+    image: haproxy:latest
+    ports:
+      - "6033:6033"
+      - "8404:8404"
+    volumes:
+      - ./conf/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    networks:
+      - galera_network
+    depends_on:
+      master:
+        condition: service_healthy
+      galera1:
+        condition: service_healthy
+      galera2:
+        condition: service_healthy
+      galera3:
+        condition: service_healthy
+
+networks:
+  galera_network:
+    driver: bridge

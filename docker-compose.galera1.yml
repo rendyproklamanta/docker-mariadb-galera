@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  # Galera Node 1
+  galera1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: galera1
+    ports:
+      - "3301:3306"
+    env_file: .env
+    environment:
+      - MARIADB_ROOT_PASSWORD=root_password
+      - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://master,galera2,galera3
+    volumes:
+      - ./data/galera1:/bitnami/mariadb
+    networks:
+      - galera_network
+    healthcheck:
+      test: mysqladmin ping -h localhost -uroot -proot_password
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    depends_on:
+      master:
+        condition: service_healthy
+
+networks:
+  galera_network:
+    driver: bridge
