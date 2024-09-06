@@ -8,13 +8,13 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: master
-    ports:
-      - "3300:3306"
+    # ports:
+    #   - "3300:3306"
     env_file: .env
     environment:
       - MARIADB_GALERA_CLUSTER_BOOTSTRAP=yes
       - MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP=yes
-      - MARIADB_ROOT_PASSWORD=root_password
+      - MARIADB_ROOT_PASSWORD=MASTER_ROOT_PASSWORD_SET
       - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://galera1,galera2,galera3
     volumes:
       - ./data/master:/bitnami/mariadb
@@ -22,7 +22,7 @@ services:
     networks:
       - galera_network
     healthcheck:
-      test: mysqladmin ping -h localhost -uroot -proot_password
+      test: mysqladmin ping -h localhost -uroot -pMASTER_ROOT_PASSWORD_SET
       interval: 10s
       retries: 5
       start_period: 30s

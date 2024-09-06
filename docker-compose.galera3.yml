@@ -11,14 +11,14 @@ services:
       - "3303:3306"
     env_file: .env
     environment:
-      - MARIADB_ROOT_PASSWORD=root_password
+      - MARIADB_ROOT_PASSWORD=GALERA3_ROOT_PASSWORD_SET
       - MARIADB_GALERA_CLUSTER_ADDRESS=gcomm://master,galera1,galera2
     volumes:
       - ./data/galera3:/bitnami/mariadb
     networks:
       - galera_network
     healthcheck:
-      test: mysqladmin ping -h localhost -uroot -proot_password
+      test: mysqladmin ping -h localhost -uroot -pGALERA3_ROOT_PASSWORD_SET
       interval: 10s
       retries: 5
       start_period: 30s
